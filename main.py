@@ -80,8 +80,6 @@ api = authTwitter()
 trend_data = []
 word_cloud_data = []
 now = datetime.now()
-df1 = pd.DataFrame(columns = ["順位", "ワード"])
-df2 = pd.DataFrame()
 
 # 都市名を指定してトレンドランキングを取得
 def trend(city):
@@ -89,10 +87,11 @@ def trend(city):
     trends = api.get_place_trends(wid)[0]
     for i, content in enumerate(trends["trends"]):
         [a, b] = [i+1, content["name"]]
-        df1 = df1.append([a, b])
+        s = pd.Series([a, b], index=["順位", "ワード"])
+        df = pd.DataFrame.append(s, ignore_index=True)
         trend_data.append(b)
         word_cloud_data.append((b + " ") * (51 - i))
-        return df1
+        return df
     
 # キーワードを指定して記事検索
 def news_search(query):
@@ -107,10 +106,11 @@ def news_search(query):
 
     if response.ok:
         data = response.json()
-        df2 = df2.append(data['articles'])
         st.write('trend_word: ', query, 'totalResults:', data['totalResults'])
+        s = pd.Series(data['articles'])
+        df = pd.DataFrame.append(s, ignore_index=True)
         if data['totalResults'] > 0:
-            st.dataframe(df2[[ 'publishedAt', 'title', 'url']])
+            return df
         
 
 # データクラウドの画像表示
@@ -135,12 +135,13 @@ genre = st.sidebar.radio(
 st.write(genre)
 st.write(now.strftime("%Y/%m/%d %H:%M:%S"))
 
-trend(genre)
-
+df1 = trend(genre)
 st.dataframe(df1)
 
 for word in trend_data:
-    news_search(word)
+    df2 = news_search(word)
+    st.dataframe(df2[[ 'publishedAt', 'title', 'url']])
+        
 
 word_cloud()
 image = Image.open('trend_data.png')
