@@ -85,10 +85,10 @@ now = datetime.now()
 def trend(city):
     wid = woeid[city]    
     trends = api.get_place_trends(wid)[0]
+    df = pd.DataFrame(columns = ["順位" , "ワード"])
     for i, content in enumerate(trends["trends"]):
         [a, b] = [i+1, content["name"]]
-        s = pd.Series([a, b], index=["順位", "ワード"])
-        df = pd.DataFrame.append(s, ignore_index=True)
+        df.loc[i+1] = [a, b]        
         trend_data.append(b)
         word_cloud_data.append((b + " ") * (51 - i))
         return df
@@ -102,13 +102,12 @@ def news_search(query):
     'sortBy': 'publishedAt',
     'pageSize': 100}
     response = requests.get(URL, headers=HEADERS, params=params)
+    df = pd.DataFrame()
     pd.options.display.max_colwidth = 25
-
     if response.ok:
         data = response.json()
         st.write('trend_word: ', query, 'totalResults:', data['totalResults'])
-        s = pd.Series(data['articles'])
-        df = pd.DataFrame.append(s, ignore_index=True)
+        df = df.append(data['articles'])       
         if data['totalResults'] > 0:
             return df
         
