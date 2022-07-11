@@ -139,8 +139,8 @@ st.dataframe(df1)
 
 for word in trend_data:
     st.write(word)
-    ret = news_search(word)
-    st.dataframe(ret[2])
+    df2 = news_search(word)
+    st.dataframe(df2)
 
 
 word_cloud()
