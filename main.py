@@ -86,7 +86,7 @@ def trend(city):
     wid = woeid[city]    
     print(city, wid)
     print(now.strftime("%Y/%m/%d %H:%M:%S"))
-    trends = api.trends_place(wid)[0]
+    trends = api.get_place_trends(wid)[0]
     for i, content in enumerate(trends["trends"]):
         [a, b] = [i+1, content["name"]]
         print(a, b)
