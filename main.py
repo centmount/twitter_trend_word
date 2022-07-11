@@ -105,7 +105,7 @@ def news_search(query):
     if response.ok:
         data = response.json()             
         if data['totalResults'] > 0:
-            return data['articles']        
+            return list(data['articles'])        
 
 # データクラウドの画像表示
 def word_cloud():
