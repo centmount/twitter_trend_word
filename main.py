@@ -86,12 +86,12 @@ def trend(city):
     wid = woeid[city]    
     print(city, wid)
     print(now.strftime("%Y/%m/%d %H:%M:%S"))
-    # trends = api.trends_place(wid)[0]
-    # for i, content in enumerate(trends["trends"]):
-    #     [a, b] = [i+1, content["name"]]
-    #     print(a, b)
-    #     trend_data.append(b)
-    #     word_cloud_data.append((b + " ") * (51 - i))
+    trends = api.trends_place(wid)[0]
+    for i, content in enumerate(trends["trends"]):
+        [a, b] = [i+1, content["name"]]
+        print(a, b)
+        trend_data.append(b)
+        word_cloud_data.append((b + " ") * (51 - i))
     
 # キーワードを指定して記事検索
 def news_search(query):
