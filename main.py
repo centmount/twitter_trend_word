@@ -91,7 +91,7 @@ def trend(city):
         df.loc[i+1] = [a, b]        
         trend_data.append(b)
         word_cloud_data.append((b + " ") * (51 - i))
-        return df
+    return df
     
 # キーワードを指定して記事検索
 def news_search(query):
@@ -139,7 +139,7 @@ st.dataframe(df1)
 
 for word in trend_data:
     df2 = news_search(word)
-    st.dataframe(df2[[ 'publishedAt', 'title', 'url']])
+    st.dataframe(df2)
         
 
 word_cloud()
