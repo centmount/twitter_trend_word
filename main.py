@@ -136,7 +136,7 @@ image = Image.open('trend_data.png')
 st.image(image, caption='Twitterトレンドワード',use_column_width=True)
 
 
-for word in trend_data:
+for word in trend_data[:3]:
     st.write(word)
     ret = news_search(word)
     st.write(ret)
