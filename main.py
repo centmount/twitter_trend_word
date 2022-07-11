@@ -80,18 +80,19 @@ api = authTwitter()
 trend_data = []
 word_cloud_data = []
 now = datetime.now()
+df1 = pd.DataFrame(columns = ["順位", "ワード"])
+df2 = pd.DataFrame()
 
 # 都市名を指定してトレンドランキングを取得
 def trend(city):
     wid = woeid[city]    
-    print(city, wid)
-    print(now.strftime("%Y/%m/%d %H:%M:%S"))
     trends = api.get_place_trends(wid)[0]
     for i, content in enumerate(trends["trends"]):
         [a, b] = [i+1, content["name"]]
-        print(a, b)
+        df1.append = [a, b]
         trend_data.append(b)
         word_cloud_data.append((b + " ") * (51 - i))
+        return df1
     
 # キーワードを指定して記事検索
 def news_search(query):
@@ -106,21 +107,20 @@ def news_search(query):
 
     if response.ok:
         data = response.json()
-        df = pd.DataFrame(data['articles'])
-        print('trend_word: ', query, 'totalResults:', data['totalResults'])
+        df2.append(data['articles'])
+        st.write('trend_word: ', query, 'totalResults:', data['totalResults'])
         if data['totalResults'] > 0:
-            print(df[[ 'publishedAt', 'title', 'url']])
+            st.dataframe(df2[[ 'publishedAt', 'title', 'url']])
+        
 
 # データクラウドの画像表示
 def word_cloud():
     text = " ".join(word_cloud_data)
-    print(text)
     wc = WordCloud(background_color="white",
                    font_path = FONT_PATH,
                    collocations = False,            
                    max_font_size=100).generate(text)
     wc.to_file("trend_data.png")
-
 
 st.title('Twitter トレンドランキング')
 
@@ -133,15 +133,18 @@ genre = st.sidebar.radio(
       "北九州", "福岡", "熊本", "沖縄"))
 
 st.write(genre)
+st.write(now.strftime("%Y/%m/%d %H:%M:%S"))
 
 trend(genre)
 
-# for word in trend_data:
-#     news_search(word)
+st.dataframe(df1)
 
-# word_cloud()
-# image = Image.open('trend_data.png')
-# st.image(image, caption='Twitterトレンドワード',use_column_width=True)
+for word in trend_data:
+    news_search(word)
+
+word_cloud()
+image = Image.open('trend_data.png')
+st.image(image, caption='Twitterトレンドワード',use_column_width=True)
 
 
 
