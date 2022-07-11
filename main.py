@@ -108,9 +108,9 @@ def news_search(query):
         data = response.json()
         df = df.append(data['articles'])       
         if data['totalResults'] > 0:
-            return query, data['totalResults'], df
+            return (query, data['totalResults'], df)
         else:
-            return query, data['totalResults']
+            return (query, data['totalResults'])
         
 
 # データクラウドの画像表示
