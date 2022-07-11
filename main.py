@@ -89,7 +89,7 @@ def trend(city):
     trends = api.get_place_trends(wid)[0]
     for i, content in enumerate(trends["trends"]):
         [a, b] = [i+1, content["name"]]
-        df1.append = [a, b]
+        df1 = df1.append = [a, b]
         trend_data.append(b)
         word_cloud_data.append((b + " ") * (51 - i))
         return df1
@@ -107,7 +107,7 @@ def news_search(query):
 
     if response.ok:
         data = response.json()
-        df2.append(data['articles'])
+        df2 = df2.append(data['articles'])
         st.write('trend_word: ', query, 'totalResults:', data['totalResults'])
         if data['totalResults'] > 0:
             st.dataframe(df2[[ 'publishedAt', 'title', 'url']])
