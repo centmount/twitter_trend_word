@@ -102,9 +102,8 @@ def news_search(query):
     'sortBy': 'publishedAt',
     'pageSize': 100}
     response = requests.get(URL, headers=HEADERS, params=params)
-    if response.ok:
-        data = response.json()             
-        return data        
+    data = response.json()             
+    return data        
 
 # データクラウドの画像表示
 def word_cloud():

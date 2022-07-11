@@ -6,6 +6,6 @@ pandas
 wordcloud
 streamlit
 Pillow
-
+requests
 
 
