@@ -106,10 +106,11 @@ def news_search(query):
     pd.options.display.max_colwidth = 25
     if response.ok:
         data = response.json()
-        st.write('trend_word: ', query, 'totalResults:', data['totalResults'])
         df = df.append(data['articles'])       
         if data['totalResults'] > 0:
-            return df
+            return query, data['totalResults'], df
+        else:
+            return query, data['totalResults']
         
 
 # データクラウドの画像表示
@@ -138,9 +139,11 @@ df1 = trend(genre)
 st.dataframe(df1)
 
 for word in trend_data:
-    df2 = news_search(word)
-    st.dataframe(df2)
-        
+    ret = news_search(word)
+    st.write('trend_word: ', ret[0], 'totalResults:', ret[1])
+    if ret[1] > 0:
+        st.dataframe(ret[2])
+
 
 word_cloud()
 image = Image.open('trend_data.png')
