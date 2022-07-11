@@ -102,15 +102,10 @@ def news_search(query):
     'sortBy': 'publishedAt',
     'pageSize': 100}
     response = requests.get(URL, headers=HEADERS, params=params)
-    df = pd.DataFrame()
-    pd.options.display.max_colwidth = 25
     if response.ok:
-        data = response.json()
-        df = df.append(data['articles'])       
+        data = response.json()             
         if data['totalResults'] > 0:
-            return df
-
-        
+            return data['articles']        
 
 # データクラウドの画像表示
 def word_cloud():
@@ -137,15 +132,16 @@ st.write(now.strftime("%Y/%m/%d %H:%M:%S"))
 df1 = trend(genre)
 st.dataframe(df1)
 
-for word in trend_data:
-    st.write(word)
-    df2 = news_search(word)
-    st.dataframe(df2)
-
 
 word_cloud()
 image = Image.open('trend_data.png')
 st.image(image, caption='Twitterトレンドワード',use_column_width=True)
+
+
+for word in trend_data[:10]:
+    st.write(word)
+    ret = news_search(word)
+    st.write(ret)
 
 
 
