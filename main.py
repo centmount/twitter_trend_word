@@ -89,7 +89,7 @@ def trend(city):
     trends = api.get_place_trends(wid)[0]
     for i, content in enumerate(trends["trends"]):
         [a, b] = [i+1, content["name"]]
-        df1 = df1.append = [a, b]
+        df1 = df1.append([a, b])
         trend_data.append(b)
         word_cloud_data.append((b + " ") * (51 - i))
         return df1
