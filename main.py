@@ -47,8 +47,8 @@ def authTwitter():
     auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
     auth.set_access_token(ACCESS_KEY, ACCESS_SECRET)
 
-    #APIインスタンスを作成、レート制限が補充されるまで待機、残り時間を知らせる
-    api = tweepy.API(auth, wait_on_rate_limit = True, wait_on_rate_limit_notify=True)
+    #APIインスタンスを作成、レート制限が補充されるまで待機
+    api = tweepy.API(auth, wait_on_rate_limit = True)
     return(api)
 
 #トレンドランキングを取得できる日本の都市
