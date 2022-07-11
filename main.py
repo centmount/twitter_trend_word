@@ -132,14 +132,16 @@ genre = st.sidebar.radio(
       "京都", "大阪", "神戸", "岡山", "広島", "高松",
       "北九州", "福岡", "熊本", "沖縄"))
 
-trend(genre)
+st.write(genre)
 
-for word in trend_data:
-    news_search(word)
+# trend(genre)
 
-word_cloud()
-image = Image.open('trend_data.png')
-st.image(image, caption='Twitterトレンドワード',use_column_width=True)
+# for word in trend_data:
+#     news_search(word)
+
+# word_cloud()
+# image = Image.open('trend_data.png')
+# st.image(image, caption='Twitterトレンドワード',use_column_width=True)
 
 
 
