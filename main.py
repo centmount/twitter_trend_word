@@ -104,8 +104,7 @@ def news_search(query):
     response = requests.get(URL, headers=HEADERS, params=params)
     if response.ok:
         data = response.json()             
-        if data['totalResults'] > 0:
-            return list(data['articles'])        
+        return data        
 
 # データクラウドの画像表示
 def word_cloud():
