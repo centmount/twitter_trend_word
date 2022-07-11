@@ -108,9 +108,8 @@ def news_search(query):
         data = response.json()
         df = df.append(data['articles'])       
         if data['totalResults'] > 0:
-            return (query, data['totalResults'], df)
-        else:
-            return (query, data['totalResults'])
+            return df
+
         
 
 # データクラウドの画像表示
@@ -139,10 +138,9 @@ df1 = trend(genre)
 st.dataframe(df1)
 
 for word in trend_data:
+    st.write(word)
     ret = news_search(word)
-    st.write('trend_word: ', ret[0], 'totalResults:', ret[1])
-    if ret[1] > 0:
-        st.dataframe(ret[2])
+    st.dataframe(ret[2])
 
 
 word_cloud()
