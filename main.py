@@ -128,7 +128,7 @@ st.write(genre)
 st.write(now.strftime("%Y/%m/%d %H:%M:%S"))
 
 df1 = trend(genre)
-st.dataframe(df1)
+st.table(df1)
 
 
 word_cloud()
@@ -137,9 +137,11 @@ st.image(image, caption='Twitterトレンドワード',use_column_width=True)
 
 
 for word in trend_data[:3]:
-    st.write(word)
-    ret = news_search(word)
-    st.write(ret)
+    data = news_search(word)
+    st.write('トレンドワード', word)
+    st.write('記事検索結果：', data['totalResults'])
+    df2 = pd.DataFrame(data["articles"])
+    st.dataframe(df2[[ 'publishedAt', 'title', 'url']])
 
 
 
