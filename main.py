@@ -6,7 +6,7 @@ Twitter APIからトップ50のランキングのデータを取得します。
 """
 
 #必要なモジュールのインポート
-from datetime import datetime
+from datetime import datetime, timedelta
 import requests
 import pandas as pd
 import tweepy
@@ -79,7 +79,7 @@ woeid = {"日本": 23424856,
 api = authTwitter()
 trend_data = []
 word_cloud_data = []
-now = datetime.now()
+japan_time = datetime.now() + timedelta(hours=9)
 
 # 都市名を指定してトレンドランキングを取得
 def trend(city):
@@ -125,23 +125,24 @@ genre = st.sidebar.radio(
       "北九州", "福岡", "熊本", "沖縄"))
 
 st.write(genre)
-st.write(now.strftime("%Y/%m/%d %H:%M:%S"))
+st.write(japan_time.strftime("%Y/%m/%d %H:%M:%S"))
 
 df1 = trend(genre)
 st.table(df1)
 
 
 word_cloud()
-image = Image.open('trend_data.png')
-st.image(image, caption='Twitterトレンドワード',use_column_width=True)
+image = Image.open("trend_data.png")
+st.image(image, caption="Twitterトレンドワード",use_column_width=True)
 
 
 for word in trend_data[:3]:
     data = news_search(word)
-    st.write('トレンドワード', word)
-    st.write('記事検索結果：', data['totalResults'])
-    df2 = pd.DataFrame(data["articles"])
-    st.dataframe(df2[[ 'publishedAt', 'title', 'url']])
+    st.write("トレンドワード", word)
+    st.write("記事検索結果：", data["totalResults"])
+    if data["totalResults"] > 0:
+        df2 = pd.DataFrame(data["articles"])
+        st.dataframe(df2[["publishedAt", "title", "url"]])
 
 
 
