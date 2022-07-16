@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 
 """
-Twitter APIからトップ50のランキングのデータを取得します。
-
+Twitter APIから地域ごとのトレンドワードのトップ50ランキングを取得します。
+ランキング上位のキーワードの文字が大きくなる簡易的なワードクラウドを作成します。
+キーワードの記事検索を行い、キーワードの関連情報を取得します。
 """
 
 #必要なモジュールのインポート
@@ -11,7 +12,9 @@ import requests
 import pandas as pd
 import tweepy
 from wordcloud import WordCloud
+import folium
 import streamlit as st
+from streamlit_folium import folium_static
 from PIL import Image
 
 st.set_page_config(layout="wide")
@@ -26,8 +29,6 @@ def login():
         st.stop()
 
 login()
-
-
 
 # Twitter API認証キーの設定
 CONSUMER_KEY = st.secrets['CONSUMER_KEY']
@@ -55,7 +56,7 @@ def authTwitter():
 woeid = {"日本": 23424856,
          "札幌": 1118108,
          "仙台": 1118129,                           
-         "埼玉": 1116753,
+         "さいたま": 1116753,
          "東京": 1118370,
          "千葉": 1117034,
          "横浜": 1118550,
@@ -76,6 +77,27 @@ woeid = {"日本": 23424856,
          "沖縄": 2345896
          }
 
+# 地図用データ
+city_data = pd.DataFrame(
+    data =[[35.685454, 139.752821, 126146099], [43.062083, 141.354389, 1962115],
+           [38.268222, 140.869417, 1098309], [35.861389, 139.645556, 1338762],
+           [35.689556, 139.691722, 14029726], [35.607278, 140.106361, 978461],
+           [35.450333, 139.634222, 3774369], [35.530889, 139.703, 1542257],
+           [35.571417, 139.373139, 726485], [37.916194, 139.036389, 779907],
+           [34.710833, 137.7275, 783856], [35.181389, 136.906389, 2326239],
+           [35.011611, 135.768111, 1449381], [34.69375, 135.502111, 2753149],
+           [34.690167, 135.195444, 1512287], [34.655111, 133.919583, 719968],
+           [34.38525, 132.455306, 1192547], [34.342806, 134.046611,	414519],
+           [33.883417, 130.875194, 926179], [33.590139, 130.401722, 1627244],
+           [32.803, 130.707861,	737423], [26.212444, 127.680917, 1467800]]
+
+    index=["日本", "札幌", "仙台", "さいたま", "東京", "千葉",
+           "横浜", "川崎", "相模原", "新潟", "浜松", "名古屋",
+           "京都", "大阪", "神戸", "岡山", "広島", "高松",
+           "北九州", "福岡", "熊本", "沖縄"],
+    columns=["x","y", "population"]
+)
+
 api = authTwitter()
 trend_data = []
 word_cloud_data = []
@@ -90,7 +112,7 @@ def trend(city):
         [a, b] = [i+1, content["name"]]
         df.loc[i+1] = [a, b]        
         trend_data.append(b)
-        word_cloud_data.append((b + " ") * (51 - i))
+        word_cloud_data.append((b + " ") * (51 - i)) # ランキング上位の要素数を増やす
     return df
     
 # キーワードを指定して記事検索
@@ -116,10 +138,23 @@ def word_cloud():
 
 st.title('Twitter トレンドランキング')
 
+# 地図を表示
+def AreaMarker(df, m):
+    for index, r in df.iterrows():
+        if index == genre:
+            folium.Marker(location=[r.x, r.y], popup=index).add_to(m)
+            folium.Circle(
+                radius= rad * 1000,
+                location=[r.x, r.y],
+                popup=index,
+                color="yellow",
+                fill=True,
+                fill_opacity=0.07).add_to(m)
+
 # サイドバーにラジオボタンを作成
 genre = st.sidebar.radio(
-     "都市名を選択してください",
-     ("日本", "札幌", "仙台", "埼玉", "東京", "千葉",
+     "都市名・地域名を選択してください",
+     ("日本", "札幌", "仙台", "さいたま", "東京", "千葉",
       "横浜", "川崎", "相模原", "新潟", "浜松", "名古屋",     
       "京都", "大阪", "神戸", "岡山", "広島", "高松",
       "北九州", "福岡", "熊本", "沖縄"))
@@ -127,22 +162,31 @@ genre = st.sidebar.radio(
 st.write(genre)
 st.write(japan_time.strftime("%Y/%m/%d %H:%M:%S"))
 
+rad = st.slider('拠点を中心とした円の半径（km）',
+                value=40,min_value=5, max_value=50) # スライダーをつける
+st.subheader("各拠点からの距離{:,}km".format(rad)) # 半径の距離を表示
+m = folium.Map(location=[35.685454, 139.752821], zoom_start=7) # 地図の初期設定
+AreaMarker(city_data, m) # データを地図渡す
+folium_static(m) # 地図情報を表示
+
+
+# トレンドワードランキングを表示
 df1 = trend(genre)
 st.table(df1)
 
-
+# ワードクラウドを表示
 word_cloud()
 image = Image.open("trend_data.png")
 st.image(image, caption="Twitterトレンドワード",use_column_width=True)
 
-
-for word in trend_data[:3]:
+# 記事検索結果を表示
+for word in trend_data[:10]:
     data = news_search(word)
     st.write("トレンドワード", word)
     st.write("記事検索結果：", data["totalResults"])
     if data["totalResults"] > 0:
         df2 = pd.DataFrame(data["articles"])
-        st.dataframe(df2[["publishedAt", "title", "url"]])
+        st.table(df2[["publishedAt", "title", "url"]])
 
 
 

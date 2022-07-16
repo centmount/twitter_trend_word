@@ -7,5 +7,5 @@ wordcloud
 streamlit
 Pillow
 requests
-
-
+folium
+streamlit_folium
