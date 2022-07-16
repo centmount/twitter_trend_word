@@ -121,7 +121,7 @@ def news_search(query):
     params = {
     'q': query,
     'sortBy': 'publishedAt',
-    'pageSize': 100}
+    'pageSize': 30}
     response = requests.get(URL, headers=HEADERS, params=params)
     data = response.json()             
     return data        
@@ -134,8 +134,6 @@ def word_cloud():
                    collocations = False,            
                    max_font_size=100).generate(text)
     wc.to_file("trend_data.png")
-
-st.title('Twitter トレンドランキング')
 
 # 地図を表示
 def AreaMarker(df, m):
@@ -158,38 +156,34 @@ genre = st.sidebar.radio(
       "京都", "大阪", "神戸", "岡山", "広島", "高松",
       "北九州", "福岡", "熊本", "沖縄"))
 
-st.write(genre)
+st.title('Twitter トレンドランキング')
 st.write(japan_time.strftime("%Y/%m/%d %H:%M:%S"))
 
 population = city_data.at[genre,"population"]
-st.subheader(f"{genre}: 人口{population}人")
+st.subheader(f"{genre}: 人口{population:,}人")
 m = folium.Map(location=[city_data.at[genre,"x"], 
                city_data.at[genre,"y"]], zoom_start=7)
-AreaMarker(city_data, m) # データを地図渡す
+AreaMarker(city_data, m) # データを地図に渡す
 folium_static(m) # 地図情報を表示
 
-
 # トレンドワードランキングを表示
+st.subheader(f"{genre}: トレンドワード Top50")
 df1 = trend(genre)
 st.table(df1)
 
 # ワードクラウドを表示
+st.subheader(f"{genre}: ワードクラウドでトレンド表示")
+st.write("※ランキングを文字サイズに反映しています")
 word_cloud()
 image = Image.open("trend_data.png")
 st.image(image, caption="Twitterトレンドワード",use_column_width=True)
 
 # 記事検索結果を表示
-for word in trend_data[:10]:
+st.subheader("トレンドワード（Top5)の関連記事を検索")
+for word in trend_data[:5]:
     data = news_search(word)
     st.write("トレンドワード", word)
     st.write("記事検索結果：", data["totalResults"])
     if data["totalResults"] > 0:
         df2 = pd.DataFrame(data["articles"])
-        st.table(df2[["publishedAt", "title", "url"]])
-
-
-
-
-
-
-
+        st.dataframe(df2[["publishedAt", "title", "url"]])
