@@ -143,7 +143,7 @@ def AreaMarker(df, m):
         if index == genre:
             folium.Marker(location=[r.x, r.y], popup=index).add_to(m)
             folium.Circle(
-                radius= rad * 1000,
+                radius= 10000,
                 location=[r.x, r.y],
                 popup=index,
                 color="yellow",
@@ -161,10 +161,10 @@ genre = st.sidebar.radio(
 st.write(genre)
 st.write(japan_time.strftime("%Y/%m/%d %H:%M:%S"))
 
-rad = st.slider('拠点を中心とした円の半径（km）',
-                value=40,min_value=5, max_value=50) # スライダーをつける
-st.subheader("各拠点からの距離{:,}km".format(rad)) # 半径の距離を表示
-m = folium.Map(location=[35.685454, 139.752821], zoom_start=7) # 地図の初期設定
+population = city_data.at[genre,"population"]
+st.subheader(f"{genre}: 人口{population}人")
+m = folium.Map(location=[city_data.at[genre,"x"], 
+               city_data.at[genre,"y"]], zoom_start=7)
 AreaMarker(city_data, m) # データを地図渡す
 folium_static(m) # 地図情報を表示
 
