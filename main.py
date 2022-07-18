@@ -46,8 +46,7 @@ FONT_PATH = "./Noto_Sans_JP/NotoSansJP-Regular.otf"
 # OAuth認証
 def authTwitter():
     auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
-    auth.set_access_token(ACCESS_KEY, ACCESS_SECRET)
-
+    auth.set_access_token(ACCESS_KEY, ACCESS_SECRET)    
     #APIインスタンスを作成、レート制限が補充されるまで待機
     api = tweepy.API(auth, wait_on_rate_limit = True)
     return(api)
@@ -74,8 +73,7 @@ woeid = {"日本": 23424856,
          "北九州": 1110809,
          "福岡": 1117099,         
          "熊本": 1117605,
-         "沖縄": 2345896
-         }
+         "沖縄": 2345896}
 
 # 地図用データ
 city_data = pd.DataFrame(
