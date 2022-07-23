@@ -185,7 +185,8 @@ for word in trend_data[:5]:
     if data["totalResults"] > 0:
         for i in range(data["totalResults"]):
             st.write(data["articles"][i]["publishedAt"][:10] + " " + data["articles"][i]["publishedAt"][11:-1])
-            st.markdown([data["articles"][i]["title"]](data["articles"][i]["url"]))
+            link = f'[{data["articles"][i]["title"]}]({data["articles"][i]["url"]})'
+            st.markdown(link, unsafe_allow_html=True)
             if i == 10:
                 break
     st.write()
