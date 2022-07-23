@@ -101,7 +101,6 @@ word_cloud_data = []
 japan_time = datetime.now() + timedelta(hours=9)
 
 # 都市名を指定してトレンドランキングを取得
-@st.cache  # キャッシュを設定
 def trend(city):
     wid = woeid[city]    
     trends = api.get_place_trends(wid)[0]
@@ -114,7 +113,6 @@ def trend(city):
     return df
     
 # キーワードを指定して記事検索
-@st.cache # キャッシュを設定
 def news_search(query):
     if query[0] == "#":
         query = query[1:]    
