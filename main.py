@@ -8,7 +8,6 @@ Twitter APIから地域ごとのトレンドワードのトップ50ランキン�
 
 #必要なモジュールのインポート
 from datetime import datetime, timedelta
-from markdown import markdown
 import requests
 import pandas as pd
 import tweepy
