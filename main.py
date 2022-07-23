@@ -8,6 +8,7 @@ Twitter APIから地域ごとのトレンドワードのトップ50ランキン�
 
 #必要なモジュールのインポート
 from datetime import datetime, timedelta
+from markdown import markdown
 import requests
 import pandas as pd
 import tweepy
@@ -101,6 +102,7 @@ word_cloud_data = []
 japan_time = datetime.now() + timedelta(hours=9)
 
 # 都市名を指定してトレンドランキングを取得
+@st.cache  # キャッシュを設定
 def trend(city):
     wid = woeid[city]    
     trends = api.get_place_trends(wid)[0]
@@ -113,6 +115,7 @@ def trend(city):
     return df
     
 # キーワードを指定して記事検索
+@st.cache # キャッシュを設定
 def news_search(query):
     if query[0] == "#":
         query = query[1:]    
@@ -184,4 +187,5 @@ for word in trend_data[:5]:
     st.write("記事検索結果：", data["totalResults"])
     if data["totalResults"] > 0:
         df2 = pd.DataFrame(data["articles"])
-        st.dataframe(df2[["publishedAt", "title", "url"]])
+        st.markdown(df2["publishedAt"].isoformat(' ', 'seconds')), \
+            df2["title"](df2["url"])
