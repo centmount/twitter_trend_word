@@ -183,6 +183,6 @@ for word in trend_data[:5]:
     st.write("トレンドワード", word)
     st.write("記事検索結果：", data["totalResults"])
     if data["totalResults"] > 0:
-        df2 = pd.DataFrame(data["articles"])
-        st.markdown(pd.to_datetime(df2["publishedAt"], format="%Y/%m/%d %H:%M:%S"))
-        st.markdown([df2["title"]](df2["url"]))
+        df2 = pd.DataFrame(data["articles"])        
+        st.dataframe(df2[["publishedAt", "title", "url"]])
+      
