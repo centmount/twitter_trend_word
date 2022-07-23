@@ -185,4 +185,4 @@ for word in trend_data[:5]:
     if data["totalResults"] > 0:
         df2 = pd.DataFrame(data["articles"])
         st.markdown(pd.to_datetime(df2["publishedAt"], format="%Y/%m/%d %H:%M:%S"), \
-            df2["title"](df2["url"]))
+            [df2["title"]](df2["url"]))
