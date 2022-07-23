@@ -183,11 +183,12 @@ for word in trend_data[:5]:
     st.write("トレンドワード", word)
     st.write("記事検索結果：", data["totalResults"])
     if data["totalResults"] > 0:
+        st.write("※記事(10件まで)のタイトルからリンク")
         for i in range(data["totalResults"]):
             st.write(data["articles"][i]["publishedAt"][:10] + " " + data["articles"][i]["publishedAt"][11:-1])
             link = f'[{data["articles"][i]["title"]}]({data["articles"][i]["url"]})'
             st.markdown(link, unsafe_allow_html=True)
-            if i == 10:
+            if i == 9:
                 break
     st.write()
 
